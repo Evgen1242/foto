@@ -1,3 +1,1 @@
-# Foto
-
-Public repository for visual references.
+Weather Consensus visual reference repository.

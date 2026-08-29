@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'chunks/**'
+      - 'image_b64/**'
       - '.github/workflows/build-image.yml'
   workflow_dispatch:
 
@@ -16,16 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify chunks
+
+      - name: Rebuild JPEG from verified chunks
         shell: bash
         run: |
-          wc -c chunks/part*.txt
-          sha256sum chunks/part*.txt
-      - name: Rebuild JPEG from chunks
-        shell: bash
-        run: |
-          cat chunks/part1.txt chunks/part2.txt chunks/part3.txt chunks/part4.txt chunks/part5.txt | base64 -d > weather_consensus_reference.jpg
+          cat image_b64/p*.txt | tr -d '\r\n' | base64 --decode > weather_consensus_reference.jpg
+          test -s weather_consensus_reference.jpg
           file weather_consensus_reference.jpg
+          sha256sum weather_consensus_reference.jpg
+          wc -c weather_consensus_reference.jpg
+
       - name: Commit generated image
         shell: bash
         run: |
@@ -35,6 +35,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'No changes'
           else
-            git commit -m 'Build weather consensus reference image'
+            git commit -m 'Rebuild Weather Consensus reference image'
             git push
           fi

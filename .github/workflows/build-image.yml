@@ -16,6 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Verify chunks
+        shell: bash
+        run: |
+          wc -c chunks/part*.txt
+          sha256sum chunks/part*.txt
       - name: Rebuild JPEG from chunks
         shell: bash
         run: |

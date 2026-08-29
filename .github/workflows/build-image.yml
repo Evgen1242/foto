@@ -1,0 +1,35 @@
+name: Build reference image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'chunks/**'
+      - '.github/workflows/build-image.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild JPEG from chunks
+        shell: bash
+        run: |
+          cat chunks/part1.txt chunks/part2.txt chunks/part3.txt chunks/part4.txt chunks/part5.txt | base64 -d > weather_consensus_reference.jpg
+          file weather_consensus_reference.jpg
+      - name: Commit generated image
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add weather_consensus_reference.jpg
+          if git diff --cached --quiet; then
+            echo 'No changes'
+          else
+            git commit -m 'Build weather consensus reference image'
+            git push
+          fi

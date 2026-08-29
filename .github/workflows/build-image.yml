@@ -38,3 +38,5 @@ jobs:
             git commit -m 'Rebuild Weather Consensus reference image'
             git push
           fi
+
+# Rebuild trigger: full six-part image payload is now present.
